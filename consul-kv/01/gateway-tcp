@@ -1,0 +1,14 @@
+metadata:
+  name: tcp
+  namespace: gloo-system
+bindAddress: '::'
+bindPort: 8085
+tcpGateway:
+  tcpHosts:
+  - name: one
+    destination:
+      single:
+        upstream:
+          name: mysql
+          namespace: gloo-system
+useProxyProto: false

@@ -80,6 +80,7 @@ services:
     - ./data/envoy-config.yaml:/config/envoy.yaml:ro
     ports:
     - "8080:8080"
+    - "8085:8085"
     - "8443:8443"
     - "19000:19000"
     restart: always
@@ -92,6 +93,7 @@ services:
     - ./data/envoy-config.yaml.2:/config/envoy.yaml:ro
     ports:
     - "9080:8080"
+    - "9085:8085"
     - "9443:8443"
     - "29000:19000"
     restart: always
