@@ -1,0 +1,113 @@
+{
+  "servers": [
+    {
+      "default_log_path": "/home/admin/mosn/logs/default.log",
+      "default_log_level": "TRACE",
+      "listeners": [
+        {
+          "name": "clientListener",
+          "address": "0.0.0.0:8080",
+          "bind_port": true,
+          "log_path": "/home/admin/mosn/logs/default.log",
+          "filter_chains": [
+            {
+              "tls_context": {},
+              "filters": [
+                {
+                  "type": "proxy",
+                  "config": {
+                    "downstream_protocol": "Http2",
+                    "upstream_protocol": "Http2",
+                    "router_config_name": "client_router"
+                  }
+                },
+                {
+                  "type": "connection_manager",
+                  "config": {
+                    "router_config_name": "client_router",
+                    "virtual_hosts": [
+                      {
+                        "name": "clientHost",
+                        "domains": [
+                          "*"
+                        ],
+                        "routers": [
+                          {
+                            "match": {
+                              "prefix": "/kv.KV/Get"
+                            },
+                            "route": {
+                              "cluster_name": "kv_gloo-system"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "cluster_manager": {
+    "clusters": [
+      {
+        "Name": "consul-svc:kv_gloo-system",
+        "type": "SIMPLE",
+        "lb_type": "LB_RANDOM",
+        "max_request_per_conn": 1024,
+        "conn_buffer_limit_bytes": 32768,
+        "hosts": [
+          {
+            "address": "kv:8081"
+          }
+        ]
+      },
+      {
+        "Name": "kv_gloo-system",
+        "type": "SIMPLE",
+        "lb_type": "LB_RANDOM",
+        "max_request_per_conn": 1024,
+        "conn_buffer_limit_bytes": 32768,
+        "hosts": [
+          {
+            "address": "kv:8081"
+          }
+        ]
+      }
+    ]
+  },
+    "metrics": {
+    "shm_zone": "metrics",
+    "shm_size": "10MB",
+    "flush_interval": "500ms",
+    "sinks": [
+      {
+        "type": "prometheus",
+        "config": {
+          "port": 34903
+        }
+      }
+    ]
+  },
+  "admin": {
+    "address": {
+      "socket_address": {
+        "address": "0.0.0.0",
+        "port_value": 34901
+      }
+    }
+  },
+  "pprof": {
+    "debug": true,
+    "port_value": 34902
+  },
+  "tracing": {
+    "enable": true,
+    "tracer": "SOFATracer"
+  }
+
+}

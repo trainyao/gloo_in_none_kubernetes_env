@@ -86,16 +86,17 @@ services:
     restart: always
 
   gateway-proxy-2:
-    image: ${GLOO_REPO:-quay.io/solo-io}/gloo-envoy-wrapper:${GLOO_VERSION:-1.2.4}
-    entrypoint: ["envoy"]
-    command: ["-c", "/config/envoy.yaml", "--disable-hot-restart"]
+    image: mosn:0.9.0-2f216954
     volumes:
-    - ./data/envoy-config.yaml.2:/config/envoy.yaml:ro
+    - /tmp/mosn/mosnd:/home/admin/mosn/bin/mosn
+    - ./data/conf/mosn_config.json:/home/admin/mosn/conf/mosn_config.json:ro
+    - ./data/conf/mosn.supervisor.conf:/etc/supervisord/conf.d/mosn.conf:ro
+    working_dir: /home/admin/mosn
     ports:
     - "9080:8080"
     - "9085:8085"
     - "9443:8443"
-    - "29000:19000"
+    - "29000:34901"
     restart: always
 
   kv:
@@ -104,25 +105,25 @@ services:
     - "8081:8081"
     restart: always
 
-  kv2:
-    image: docker.io/trainyao/gloo_in_none_kubernetes_env_kv:reflect
-    ports:
-    - "8082:8081"
-    restart: always
+  # kv2:
+  #   image: docker.io/trainyao/gloo_in_none_kubernetes_env_kv:reflect
+  #   ports:
+  #   - "8082:8081"
+  #   restart: always
 
-  kv-no-reflect:
-    image: docker.io/trainyao/gloo_in_none_kubernetes_env_kv:latest
-    ports:
-    - "8083:8081"
-    restart: always
+  # kv-no-reflect:
+  #   image: docker.io/trainyao/gloo_in_none_kubernetes_env_kv:latest
+  #   ports:
+  #   - "8083:8081"
+  #   restart: always
 
-  mysql:
-    image: mysql:5.7
-    ports:
-    - "3306:3306"
-    environment:
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_DATABASE: db
-      MYSQL_ROOT_PASSWORD: root
-    restart: always
+  # mysql:
+  #   image: mysql:5.7
+  #   ports:
+  #   - "3306:3306"
+  #   environment:
+  #     MYSQL_USER: root
+  #     MYSQL_PASSWORD: root
+  #     MYSQL_DATABASE: db
+  #     MYSQL_ROOT_PASSWORD: root
+  #   restart: always
