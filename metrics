@@ -1,0 +1,35 @@
+
+
+
+language=go/python srv=redapi  env=test/dev/production host=domain:port
+
+
+
+goroutine_total{}
+heap_alloc_bytes{}
+
+
+http
+
+response_code=200/2xx/503/5xx  
+query_total{}
+
+le=1/5/10/25/100/...
+response_ms_bucket{}
+
+
+
+grpc
+
+
+
+log
+level=trace/debug/info/...  logger=default/ad_ai/ai_word
+log_total{}
+
+
+cache
+
+
+
+
