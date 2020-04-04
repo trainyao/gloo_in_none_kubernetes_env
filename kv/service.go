@@ -7,7 +7,6 @@ import (
 	"net"
 
 	"sync"
-
 	"github.com/trainyao/gloo_in_none_kubernetes_env/kv/kv"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
