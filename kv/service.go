@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
+	"time"
 
 	"sync"
 	"github.com/trainyao/gloo_in_none_kubernetes_env/kv/kv"
@@ -60,6 +62,25 @@ func main() {
 	reflection.Register(gs)
 	
 	log.Printf("starting grpc on :%d\n", *port)
+
+	start := time.Now()
+	mux := http.NewServeMux()
+	mux.HandleFunc("/health", func(writer http.ResponseWriter, request *http.Request) {
+		n := time.Since(start)
+		if n > 20*time.Second {
+			writer.WriteHeader(404)
+			return
+		}
+
+		writer.Write([]byte("ok"))
+	})
+
+	l, err := net.Listen("tcp", "0.0.0.0:8082")
+	if err != nil {
+		panic(err)
+	}
+
+	go http.Serve(l, mux)
 
 	err = gs.Serve(lis)
 	if err != nil {
